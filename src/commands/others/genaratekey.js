@@ -3,7 +3,8 @@ const { SlashCommandBuilder, EmbedBuilder, codeBlock, Colors } = require("discor
 
 
 const renderkey = async (pssh,lic_url)=>{
-	const postUrl = `${process.env.api_url}/licence`;
+	const postUrl = `http://fask-api.onrender.com/licence`;
+	// const postUrl = `${process.env.api_url}/licence`;
 	const lic_data =JSON.stringify({
 		"pssh": pssh,
 		"lic_url": lic_url
