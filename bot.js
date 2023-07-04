@@ -5,6 +5,7 @@ const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits, Guild, codeBlock } = require('discord.js');
 const {slashCommandHandler,restCommandHandler} = require('./src/commands/command.handler');
 const { prefix } = require('./src/configs/bot.config');
+const { connectDb } = require('./src/db/db.connect');
 
 // const {getPssh} = require('./src/bot/commands/others/getpssh');
 // const { writeLogs } = require('./src/helpers/utility');
@@ -28,6 +29,7 @@ const {newcommand,legacy} = slashCommandHandler()
 client.commands = newcommand;
 client.legacy = legacy;
 
+connectDb();
 restCommandHandler();
 
 // only listen for chat input command
