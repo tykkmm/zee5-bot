@@ -1,4 +1,30 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { default: axios } = require("axios");
+const { SlashCommandBuilder, EmbedBuilder, codeBlock, Colors } = require("discord.js");
+
+
+const renderkey = async (pssh,lic_url)=>{
+	const postUrl = `${process.env.api_url}/licence`;
+	const lic_data =JSON.stringify({
+		"pssh": pssh,
+		"lic_url": lic_url
+	  });
+	  try {
+
+		const axr = await axios.post(postUrl,lic_data,{
+			headers: { 
+				'X-API-Key': process.env.api_key, 
+				'Content-Type': 'application/json'
+			  }
+		});
+		const data = (axr.data);
+        return data;
+	  } catch (error) {
+        console.log(error)
+		return ({status:'error',error:error.message});
+	  }
+}
+
+
 
 
 module.exports = {
@@ -13,17 +39,73 @@ module.exports = {
 		}),
 	async execute(interaction ) {
         await interaction.deferReply();
-		const pssh = interaction.options.getString('pssh');
-		const lic_url = interaction.options.getString('licence_url');
+		const _pssh = interaction.options.getString('pssh');
+		const _lic_url = interaction.options.getString('licence_url');
 
-        let result = [pssh,lic_url];
-        // if(!count){
-        //     result = interaction.client.logger;
-        // }else{
-        //     result = interaction.client.logger.slice(0,count);
-        // }
-        
-		await interaction.followUp(`${JSON.stringify(result)}`);
+        let data =await renderkey(_pssh,_lic_url);
+		const {status , wv} = data;
+
+		if(status=='error'){
+			const errEm= new EmbedBuilder()
+							.setTimestamp()
+							.setTitle('Udemy DRM key')
+							.setDescription(`Reason : ${data?.error}`)
+							.addFields([
+								{
+									name:'PSSH',
+									value:`${_pssh}`
+								},
+								{
+									name:'licence Url',
+									value:_lic_url
+								}
+							])
+							.setColor(Colors.Red);
+			await interaction.followUp({embeds:[errEm]});
+			return ;
+		}
+		else{
+			const keydata = typeof wv=='string' ? JSON.parse(wv) : wv;
+			const {cdm,pssh,result,proxy,licence_url} = keydata;
+			if(!result.length){
+				await interaction.followUp(`No key found!`);
+				return;
+			}
+			const msgEmb = new EmbedBuilder()
+							.setTitle(`Udemy DRM key`)
+							.setTimestamp()
+							.setColor(Colors.Green)
+							.setFooter({text:`requested by : ${interaction.user.id}`})
+							.addFields([
+								{
+									name:'CDM',
+									value:`${cdm.split('/').pop().replace('.wvd','')}`,
+									inline:true
+								},
+								{
+									name:'Proxy',
+									value:`${proxy}`,
+									inline:true
+								},
+								{
+									name:'PSSH',
+									value:`${pssh}`,
+									inline:false
+								},
+								{
+									name:'key',
+									value:`${result.join('\n')}`,
+									inline:false
+								},
+								{
+									name:`Requested By:`,
+									value:`<@${interaction.user.id}>`,
+									inline:true
+								}
+							]);
+
+							await interaction.followUp({ embeds: [msgEmb] });
+		}
 		
 	},
 };

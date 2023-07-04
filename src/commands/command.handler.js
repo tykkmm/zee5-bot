@@ -18,6 +18,7 @@ const readSubFolder = (obj) => {
 };
 
 const readFolder = (folderPath)=>{
+    // console.log(__dirname)
     const fileList = fs
         .readdirSync(__dirname, {
             withFileTypes: true,
@@ -55,7 +56,9 @@ const restCommandHandler = async ()=>{
     const commandFiles = readFolder();
     for (const file of commandFiles) {
         const command = require(file);
-        commands.push(command.data.toJSON());
+        if(command?.type==undefined){
+            commands.push(command.data.toJSON());
+        }
     }
     const rest = new REST().setToken(BOT_TOKEN);
     try {
