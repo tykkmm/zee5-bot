@@ -5,7 +5,9 @@ const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits, Guild, codeBlock } = require('discord.js');
 const {slashCommandHandler,restCommandHandler} = require('./src/commands/command.handler');
 const { prefix } = require('./src/configs/bot.config');
+
 const { connectDb } = require('./src/db/db.connect');
+const { restartRenderService } = require('./src/helpers/utility');
 
 // const {getPssh} = require('./src/bot/commands/others/getpssh');
 // const { writeLogs } = require('./src/helpers/utility');
@@ -154,10 +156,13 @@ client.once(Events.ClientReady, (c) => {
     console.log(`Ready to go! Logged in as ${c.user.tag}`);
 });
 
-// setInterval(()=>{
-// 	writeLogs(logFilePath,client.logger);
-// },3*60*1000);
 
+//scheduled job
+//restart render service after every 3 hour
+
+setInterval(async ()=>{
+	await restartRenderService();
+} , 3*60*60);
 
 client.login(BOT_TOKEN);
 

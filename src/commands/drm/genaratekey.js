@@ -9,7 +9,7 @@ const { insertKey } = require("../../db/udemy.keys.model");
 
 const renderkey = async (pssh, lic_url) => {
     // const postUrl = prov;
-    const postUrl = `${process.env.api_url}/licence`;
+    const postUrl = `${process.env.API_URL}/licence`;
     const lic_data = JSON.stringify({
         pssh: pssh,
         lic_url: lic_url,
@@ -17,7 +17,7 @@ const renderkey = async (pssh, lic_url) => {
     try {
         const axr = await axios.post(postUrl, lic_data, {
             headers: {
-                "X-API-Key": process.env.api_key,
+                "X-API-Key": process.env.API_KEY,
                 "Content-Type": "application/json",
             },
         });

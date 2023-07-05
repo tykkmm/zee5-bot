@@ -15,9 +15,9 @@ const getUptime = (timeInSeconds) => {
 };
 const cmdApiUpTime = async () => {
     try {
-        const res = await axios.get(`${process.env.api_url}/ping`, {
+        const res = await axios.get(`${process.env.API_URL}/ping`, {
             headers: {
-                "X-API-Key": process.env.api_key,
+                "X-API-Key": process.env.API_KEY,
             },
         });
         const { data } = res;
