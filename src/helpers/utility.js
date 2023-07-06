@@ -98,10 +98,9 @@ const restartRenderService = async () => {
                 authorization: `Bearer ${secret_key}`,
             },
         });
-        if(result.statusCode==200){
-            return true;
-        }
+        return true;
     } catch (error) {
+        // console.log(error)
         return undefined;
     }
 };

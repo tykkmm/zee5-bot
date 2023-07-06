@@ -162,7 +162,7 @@ client.once(Events.ClientReady, (c) => {
 
 setInterval(async ()=>{
 	await restartRenderService();
-} , 3*60*60);
+} , 8*60*60*1000);
 
 client.login(BOT_TOKEN);
 

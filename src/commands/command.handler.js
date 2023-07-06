@@ -36,14 +36,13 @@ const slashCommandHandler = () => {
     const fileList = readFolder();
     for (let i = 0; i < fileList.length; i++) {
         const command = require(fileList[i]);
-        if ('data' in command && 'execute' in command) {
-            if(command?.type =='legacy'){
-                legacyCommands.set(command.info.name,command);
-            }else{
-
+        if(command?.type){
+            legacyCommands.set(command.info.name,command);
+        }
+        else{
                 commandCollection.set(command.data.name, command)
             }
-        }
+        
     }
     return ({
         "newcommand":commandCollection,
@@ -55,6 +54,7 @@ const restCommandHandler = async ()=>{
     const commands = [];
     const commandFiles = readFolder();
     for (const file of commandFiles) {
+        // console.log(`file =`,file);
         const command = require(file);
         if(command?.type==undefined){
             commands.push(command.data.toJSON());

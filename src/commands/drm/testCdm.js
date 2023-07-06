@@ -1,74 +1,45 @@
-const { default: axios } = require("axios");
+
 const {
     SlashCommandBuilder,
     EmbedBuilder,
     codeBlock,
     Colors,
 } = require("discord.js");
-const { insertKey } = require("../../db/udemy.keys.model");
-const { renderkey } = require("../../helpers/drm.helper");
-
-// const renderkey = async (pssh, lic_url) => {
-//     // const postUrl = prov;
-//     const postUrl = `${process.env.API_URL}/licence`;
-//     const lic_data = JSON.stringify({
-//         pssh: pssh,
-//         lic_url: lic_url,
-//     });
-//     try {
-//         const axr = await axios.post(postUrl, lic_data, {
-//             headers: {
-//                 "X-API-Key": process.env.API_KEY,
-//                 "Content-Type": "application/json",
-//             },
-//         });
-//         const data = axr.data;
-//         return data;
-//     } catch (error) {
-//         // console.log(error);
-//         return { status: "error", error: error.message };
-//     }
-// };
+const { testCdm } = require("../../helpers/drm.helper");
+const { admin_user } = require("../../configs/bot.config");
 
 module.exports = {
-    // renderkey,
     data: new SlashCommandBuilder()
-        .setName("getkey")
-        .setDescription("generate udemy keys!")
+        .setName("test")
+        .setDescription("test a CDM")
         .addStringOption((n) => {
             return n
-                .setName("pssh")
-                .setDescription("content PSSH")
-                .setRequired(true);
-        })
-        .addStringOption((l) => {
-            return l
-                .setName("licence_url")
-                .setDescription("video licence url")
+                .setName("cdm")
+                .setDescription("cdm name")
                 .setRequired(true);
         }),
     async execute(interaction) {
         await interaction.deferReply();
-        const _pssh = interaction.options.getString("pssh");
-        const _lic_url = interaction.options.getString("licence_url");
+        const _cdm = interaction.options.getString("cdm");
+        //check if user is allwoed
 
-        let data = await renderkey(_pssh, _lic_url);
-        const { status, wv } = data;
-
-        if (status == "error") {
+        if(!admin_user.includes(interaction.user.id)){
+            return (await interaction.followUp({content: `you are not allowed.`}));
+        }
+        // console.log(_cdm);
+        let data = await testCdm(_cdm);
+        const { status, wv ,error} = data;
+        
+        if (status == "error" || error) {
             const errEm = new EmbedBuilder()
                 .setTimestamp()
-                .setTitle("Udemy DRM key")
+                .setTitle("Test CDM")
                 .setDescription(`Reason : ${data?.error}`)
                 .addFields([
                     {
-                        name: "PSSH",
-                        value: `${_pssh}`,
-                    },
-                    {
-                        name: "licence Url",
-                        value: _lic_url,
-                    },
+                        name: "CDM",
+                        value: `${_cdm}`,
+                    }
                 ])
                 .setColor(Colors.Red);
             await interaction.followUp({ embeds: [errEm] });
@@ -114,7 +85,6 @@ module.exports = {
                 ]);
 
             await interaction.followUp({ embeds: [msgEmb] });
-			await insertKey(_pssh,result);
         }
     },
 };
