@@ -14,7 +14,7 @@ module.exports = {
 			// console.log(msg.author)
 			const em = new EmbedBuilder()
 						.setTitle("Udemy Cookies")
-						.setDescription(`[Grab You Udemy Cookies 🍪🍪🍪](${cookieLink})`)	
+						.setDescription(`[Grab Your Udemy Cookies 🍪🍪🍪](${cookieLink})`)	
 						.setTimestamp()
 						.addFields([{
 							name:`Requested By:`,

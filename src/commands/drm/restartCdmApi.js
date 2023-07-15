@@ -6,7 +6,7 @@ const { admin_user } = require("../../configs/bot.config");
 module.exports = {
     type: "legacy",
     info: {
-        name: "r",
+        name: "restart",
         allowed:[...admin_user ]
     },
     run: async function(msg, client)  {

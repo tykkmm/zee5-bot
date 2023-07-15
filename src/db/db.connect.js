@@ -9,7 +9,9 @@ const dbList = {
 const connectDb = ()=>{
 
     const {url1,url2,url3,remote} = dbList;
-    mongoose.connect(remote).then(()=>console.log(`connected to DB`)).catch(err => console.log(err));
+    const currentUrl = remote;
+    // const currentUrl = url2;
+    mongoose.connect(currentUrl).then(()=>console.log(`connected to DB`)).catch(err => console.log(err));
 };
 module.exports = {connectDb};
 
