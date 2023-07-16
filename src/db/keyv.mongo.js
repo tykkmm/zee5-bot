@@ -51,7 +51,17 @@ const findKey = async (key) => {
     }
 };
 
+const deleteKey = async (key)=>{
+    try {
+        const res = await keyValueModel.findOneAndDelete({key:key}).exec();
+        return true;
+    } catch (error) {
+        return undefined;
+    }
+};
+
 module.exports = {
     insertSingleKey,
     findKey,
+    deleteKey
 };

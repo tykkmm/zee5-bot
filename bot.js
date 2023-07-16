@@ -5,9 +5,10 @@ const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits, Guild, codeBlock } = require('discord.js');
 const {slashCommandHandler,restCommandHandler} = require('./src/commands/command.handler');
 const { prefix } = require('./src/configs/bot.config');
-
 const { connectDb } = require('./src/db/db.connect');
 const { restartRenderService } = require('./src/helpers/utility');
+const {expressServer} = require('./src/server/server');
+const __PORT__ = process.env.PORT ||  3089;
 
 // const {getPssh} = require('./src/bot/commands/others/getpssh');
 // const { writeLogs } = require('./src/helpers/utility');
@@ -164,8 +165,12 @@ setInterval(async ()=>{
 	await restartRenderService();
 } , 8*60*60*1000);
 
+//start bot
 client.login(BOT_TOKEN);
-
+//start server
+expressServer.listen(__PORT__,()=>{
+	console.log(`server running at : http://localhost:${__PORT__}`);
+});
 
 
 
