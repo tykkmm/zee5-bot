@@ -7,6 +7,6 @@ module.exports = {
 		.setDescription('Replies with Pong!'),
 	async execute(interaction) {
 		await interaction.deferReply();
-		await interaction.followUp('Pong!');
+		await interaction.followUp('Pong! '+new Date().toLocaleTimeString());
 	},
 };

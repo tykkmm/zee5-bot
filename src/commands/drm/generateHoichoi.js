@@ -1,45 +1,74 @@
-
+const { default: axios } = require("axios");
 const {
     SlashCommandBuilder,
     EmbedBuilder,
     codeBlock,
     Colors,
 } = require("discord.js");
-const { testCdm } = require("../../helpers/drm.helper");
-const { admin_user } = require("../../configs/bot.config");
+const { insertKey } = require("../../db/udemy.keys.model");
+const { hoichoiKey } = require("../../helpers/drm.helper");
+
+// const renderkey = async (pssh, lic_url) => {
+//     // const postUrl = prov;
+//     const postUrl = `${process.env.API_URL}/licence`;
+//     const lic_data = JSON.stringify({
+//         pssh: pssh,
+//         lic_url: lic_url,
+//     });
+//     try {
+//         const axr = await axios.post(postUrl, lic_data, {
+//             headers: {
+//                 "X-API-Key": process.env.API_KEY,
+//                 "Content-Type": "application/json",
+//             },
+//         });
+//         const data = axr.data;
+//         return data;
+//     } catch (error) {
+//         // console.log(error);
+//         return { status: "error", error: error.message };
+//     }
+// };
 
 module.exports = {
+    // renderkey,
     data: new SlashCommandBuilder()
-        .setName("test")
-        .setDescription("test a CDM")
+        .setName("hoichoi")
+        .setDescription("generate Hoichoi keys!")
         .addStringOption((n) => {
             return n
-                .setName("cdm")
-                .setDescription("cdm name")
+                .setName("pssh")
+                .setDescription("content PSSH")
+                .setRequired(true);
+        })
+        .addStringOption((l) => {
+            return l
+                .setName("token")
+                .setDescription("video licence token")
                 .setRequired(true);
         }),
     async execute(interaction) {
         await interaction.deferReply();
-        const _cdm = interaction.options.getString("cdm");
-        //check if user is allwoed
+        const _pssh = interaction.options.getString("pssh");
+        const _token_ = interaction.options.getString("token");
 
-        if(!admin_user.includes(interaction.user.id)){
-            return (await interaction.followUp({content: `you are not allowed.`}));
-        }
-        // console.log(_cdm);
-        let data = await testCdm(_cdm);
-        const { status, wv ,error} = data;
-        
-        if (status == "error" || error) {
+        let data = await hoichoiKey(_pssh, _token_);
+        const { status, wv } = data;
+
+        if (status == "error") {
             const errEm = new EmbedBuilder()
                 .setTimestamp()
-                .setTitle("Test CDM")
+                .setTitle("Udemy DRM key")
                 .setDescription(`Reason : ${data?.error}`)
                 .addFields([
                     {
-                        name: "CDM",
-                        value: `${_cdm}`,
-                    }
+                        name: "PSSH",
+                        value: `${_pssh}`,
+                    },
+                    {
+                        name: "licence Url",
+                        value: _lic_url,
+                    },
                 ])
                 .setColor(Colors.Red);
             await interaction.followUp({ embeds: [errEm] });
@@ -52,18 +81,18 @@ module.exports = {
                 return;
             }
             const msgEmb = new EmbedBuilder()
-                .setTitle(`Udemy DRM key`)
+                .setTitle(`Hoichoi DRM key`)
                 .setTimestamp()
                 .setColor(Colors.Green)
                 .setFooter({ text: `requested by : ${interaction.user.id}` })
                 .addFields([
                     {
-                        name: "CDM",
+                        name: "Platform",
                         value: `${cdm.split("/").pop().replace(".wvd", "")}`,
                         inline: true,
                     },
                     {
-                        name: "Proxy",
+                        name: "Origin",
                         value: `${proxy}`,
                         inline: true,
                     },
@@ -85,6 +114,7 @@ module.exports = {
                 ]);
 
             await interaction.followUp({ embeds: [msgEmb] });
+			await insertKey(_pssh,result);
         }
     },
 };

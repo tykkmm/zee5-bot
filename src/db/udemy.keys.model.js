@@ -106,7 +106,18 @@ const findKeyByPssh = async (pssh) => {
     }
 };
 
+const drmkeyCount = async ()=>{
+    try {
+        const ad = await keysModel.countDocuments();
+        return ad;
+        
+    } catch (error) {
+        return 0
+    }
+};
+
 module.exports = {
     insertKey,
     findKeyByPssh,
+    drmkeyCount
 };

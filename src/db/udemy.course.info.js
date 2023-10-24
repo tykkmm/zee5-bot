@@ -25,7 +25,9 @@ const courseDRMinfo = new mongoose.Schema(
         user:{
             type:String,
             required:true
-        }
+        },
+        generated : Boolean
+        
     },
     {
         timestamps: true,
@@ -65,6 +67,26 @@ const countCourseData = async () => {
         return 0;
     }
 };
+
+const getCourseInfo = async (_limit=3)=>{
+    try {
+        const tst = await drmInfoModel.find({}).limit(_limit).exec();
+        return tst;
+    } catch (error) {
+        return [];
+    }
+};
+
+const deleteMultiInfo = async (multiInfo)=>{
+    if(Array.isArray(multiInfo)){
+        for(let i = 0 ;i<multiInfo.length;i++){
+            await deleteCourseInfo(multiInfo[i].pssh);
+        }
+        return true;
+    }else{
+        return false;
+    }
+};
 const deleteCourseInfo = async (pssh) => {
     if (pssh) {
         try {
@@ -83,5 +105,7 @@ const deleteCourseInfo = async (pssh) => {
 module.exports = {
     addCourseInfo,
     countCourseData,
-    deleteCourseInfo
+    deleteCourseInfo,
+    getCourseInfo,
+    deleteMultiInfo
 };

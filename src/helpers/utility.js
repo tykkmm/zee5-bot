@@ -120,6 +120,7 @@ const getRapidDownloadLink = async (fileLink) => {
         fileLink;
     const headers = {
         authority: "dl.mobilism.org",
+        cookie: 'cf_clearance=QwS2VOOPUqqj90wj8TU4FtWrX9SvTho9U3gkUREX5_o-1700747318-0-1-55f204af.62026c09.2f35b4f-0.2.1700747318; PHPSESSID=rhu9tlj478erupaf47toncq1d2',
         accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
         "user-agent":
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
@@ -148,13 +149,31 @@ const getRapidDownloadLink = async (fileLink) => {
             return data.slice(idx, last_idx).split("=").pop();
         }
     } catch (error) {
-        return undefined;
+        
+        return error.message;
     }
 };
+
+
+const multiLinkDownloader = async (links=[])=>{
+
+    const linkPromises = links.map( v => getRapidDownloadLink(v));
+
+    try{
+        const result = await Promise.all(linkPromises);
+        return result;
+    }catch(er){
+        throw er;
+    }
+
+    
+};
+
 module.exports = {
     writeLogs,
     genericEmbedMessage,
     getUdemyCookies,
     restartRenderService,
     getRapidDownloadLink,
+    multiLinkDownloader
 };

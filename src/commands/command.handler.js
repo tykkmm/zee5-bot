@@ -35,11 +35,15 @@ const slashCommandHandler = () => {
     // readFolder('others')
     const fileList = readFolder();
     for (let i = 0; i < fileList.length; i++) {
+        delete require.cache[require.resolve(fileList[i])];
+
         const command = require(fileList[i]);
         if(command?.type){
+            legacyCommands.delete(command.info.name);//old cache
             legacyCommands.set(command.info.name,command);
         }
         else{
+                commandCollection.delete(command.data.name);//old cache
                 commandCollection.set(command.data.name, command)
             }
         
@@ -74,7 +78,21 @@ const restCommandHandler = async ()=>{
 	}
 }
 
+
+const _restartCommands_ = async (client)=> {
+    
+    const _client_ = client;
+
+    restCommandHandler();
+    console.log(`------->Loading Commands: `,new Date().toLocaleTimeString());
+    const {legacy,newcommand} = slashCommandHandler();
+    _client_.commands = newcommand;
+    _client_.legacy = legacy;
+
+};
+
 module.exports = {
     slashCommandHandler,
-    restCommandHandler
+    restCommandHandler,
+    _restartCommands_
 }

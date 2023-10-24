@@ -3,11 +3,13 @@ console.clear();
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits, Guild, codeBlock } = require('discord.js');
-const {slashCommandHandler,restCommandHandler} = require('./src/commands/command.handler');
+const { _restartCommands_} = require('./src/commands/command.handler');
 const { prefix } = require('./src/configs/bot.config');
 const { connectDb } = require('./src/db/db.connect');
-const { restartRenderService } = require('./src/helpers/utility');
+const { restartRenderService, multiLinkDownloader } = require('./src/helpers/utility');
 const {expressServer} = require('./src/server/server');
+//modals
+const {response : rapidLinkResponse , modalId : rapidModalId} = require('./src/modals/rapidLink.modal');
 const __PORT__ = process.env.PORT ||  3089;
 
 // const {getPssh} = require('./src/bot/commands/others/getpssh');
@@ -26,16 +28,14 @@ const client = new Client({
 });
 
 process.discordClient = client;
-
 client.logger = new Array();
-const {newcommand,legacy} = slashCommandHandler()
-client.commands = newcommand;
-client.legacy = legacy;
+
+ _restartCommands_(client);
 
 connectDb();
-restCommandHandler();
+// restCommandHandler();
 
-// only listen for chat input command
+// only listen for legacy chat input command
 
 client.on(Events.MessageCreate,async msg=>{
 
@@ -43,17 +43,21 @@ client.on(Events.MessageCreate,async msg=>{
 	if(!msg.content.startsWith(prefix)) return;
 	const slice_pos = (msg.content.indexOf(' ') < 0  ) && msg.content.length;
 	const cmd = msg.content.slice(prefix.length,slice_pos);
-	let res = legacy.get(cmd);
+	let res = client.legacy.get(cmd);
 	if(res){
 		console.log(`command is ->${cmd}`);
 		await res.run(msg,client);
 	}
 });
 
+
 client.on(Events.InteractionCreate, async interaction => {
 
 	if (!interaction.isChatInputCommand()) return;
+
 	const command = interaction.client.commands.get(interaction.commandName);
+
+	// console.log('=>',command);
 	if (!command) {
 		console.error(`No command matching ${interaction.commandName} was found.`);
 		return;
@@ -71,12 +75,17 @@ client.on(Events.InteractionCreate, async interaction => {
 
 });
 
-// only listen for modal submit event
 
+// only listen for modal submit event
 client.on(Events.InteractionCreate,async interaction => {
 	if (!interaction.isModalSubmit()) return;
 
-	if (interaction.customId === 'pssh_modal') {
+
+	// console.log(`an interaction output`);
+	if(interaction.customId ===  rapidModalId){
+		 rapidLinkResponse(interaction);
+	}
+	else if (interaction.customId === 'pssh_modal') {
 
 		await interaction.deferReply();
 		const inputLink = interaction.fields.fields.first().value;
@@ -145,7 +154,9 @@ client.on(Events.InteractionCreate,async interaction => {
 			await interaction.followUp({content:codeBlock('wrong input!')})
 		}
 	}
+
 });
+
 
 // When the client is ready, run this code (only once)
 // We use 'c' for the event parameter to keep it separate from the already defined 'client'
@@ -160,7 +171,6 @@ client.once(Events.ClientReady, (c) => {
 
 //scheduled job
 //restart render service after every 3 hour
-
 setInterval(async ()=>{
 	await restartRenderService();
 } , 8*60*60*1000);
@@ -173,8 +183,11 @@ expressServer.listen(__PORT__,()=>{
 });
 
 
-
-module.exports.client = client;
+module.exports = {
+	client : client,
+}
+// module.exports.client = client;
+// module.exports.reloadCommands = setCommands;
 // Log in to Discord with your client's token
 
 // startServer();

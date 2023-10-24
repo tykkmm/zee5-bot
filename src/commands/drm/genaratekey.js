@@ -87,12 +87,12 @@ module.exports = {
                 .setFooter({ text: `requested by : ${interaction.user.id}` })
                 .addFields([
                     {
-                        name: "CDM",
+                        name: "Platform",
                         value: `${cdm.split("/").pop().replace(".wvd", "")}`,
                         inline: true,
                     },
                     {
-                        name: "Proxy",
+                        name: "Origin",
                         value: `${proxy}`,
                         inline: true,
                     },

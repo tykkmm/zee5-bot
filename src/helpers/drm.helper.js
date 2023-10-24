@@ -41,6 +41,29 @@ const testCdm = async (cdmName)=>{
     }
 }
 
+const hoichoiKey = async (pssh, token) => {
+    // const postUrl = prov;
+    const postUrl = `${process.env.API_URL}/hoichoi`;
+    const requestData = JSON.stringify({
+        pssh: pssh,
+        lic_url: "https://drm-widevine-licensing.axprod.net/AcquireLicense",
+        token : token
+    });
+    try {
+        const axr = await axios.post(postUrl, requestData, {
+            headers: {
+                "X-API-Key": process.env.API_KEY,
+                "Content-Type": "application/json",
+            },
+        });
+        const data = axr.data;
+        return data;
+    } catch (error) {
+        // console.log(error);
+        return { status: "error", error: error.message };
+    }
+};
+
 module.exports = {
-    renderkey,testCdm
+    renderkey,testCdm,hoichoiKey
 }
