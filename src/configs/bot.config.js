@@ -1,4 +1,14 @@
-module.exports={
-    prefix:'!',
-    admin_user:['521330948382654487']
+{
+  "prefix": ".",
+  "greetNewMembers": {
+        "enabled": true,
+        "gifUrl": "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGE4enB5eXFsZWZ5cmhucmI4YTZoZnMyYjVnbzd2ZTN6c3czYWJ1eSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/WiIuC6fAOoXD2/giphy.gif"
+  },
+  "port": "8080",
+  "owner": "T_Y",
+  "owner_id": "5976437467",
+  "token": "7355006985:AAEY8ijg4CP-8GgcliRGJja87Tby78QT7To",
+  "age": "2",
+  "gender": "male",
+  "country": "Pakistan"
 }
