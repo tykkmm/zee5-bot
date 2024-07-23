@@ -176,7 +176,7 @@ setInterval(async ()=>{
 } , 8*60*60*1000);
 
 //start bot
-client.login(BOT_TOKEN);
+client.login(7355006985:AAEY8ijg4CP-8GgcliRGJja87Tby78QT7To);
 //start server
 expressServer.listen(__PORT__,()=>{
 	console.log(`server running at : http://localhost:${__PORT__}`);
