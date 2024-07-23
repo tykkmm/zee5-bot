@@ -17,7 +17,7 @@ const __PORT__ = process.env.PORT ||  3089;
 
 // const logFilePath = path.resolve("./src/bot/logs/"+Date.now()+".txt");
 
-const BOT_TOKEN = process.env.BOT_TOKEN
+const BOT_TOKEN = process.env.7355006985:AAEY8ijg4CP-8GgcliRGJja87Tby78QT7To
 
 const client = new Client({
     intents: [
@@ -176,7 +176,7 @@ setInterval(async ()=>{
 } , 8*60*60*1000);
 
 //start bot
-client.login(7355006985:AAEY8ijg4CP-8GgcliRGJja87Tby78QT7To);
+client.login(BOT_TOKEN);
 //start server
 expressServer.listen(__PORT__,()=>{
 	console.log(`server running at : http://localhost:${__PORT__}`);
